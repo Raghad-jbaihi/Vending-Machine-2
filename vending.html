@@ -551,6 +551,30 @@ function closeDetailsModal() {
 function orderThis() {
     if (selectedTeddyId === null) return;
     const data = teddyData[selectedTeddyId];
+
+    // المنع فقط عندما يصبح المخزون صفر
+    if (data.stock <= 0) {
+        showError("Out of stock!");
+        detailsModal.hide();
+        setMainPath(['Scan', 'Welcome', 'Product', 'Details(Out of Stock)', 'Product']);
+        return;
+    }
+
+    data.stock -= 1;
+    cart.push({
+        id: selectedTeddyId,
+        name: data.name,
+        price: data.price,
+        img: data.img
+    });
+
+    detailsModal.hide();
+    setMainPath(['Scan', 'Welcome', 'Product', 'Details(Order)', 'Product']);
+    updateCartUI();
+    updateStockBadges();
+}
+    if (selectedTeddyId === null) return;
+    const data = teddyData[selectedTeddyId];
     const inCart = cart.filter(i => i.id === selectedTeddyId).length;
 
     if (inCart >= data.stock) {
@@ -570,7 +594,7 @@ function orderThis() {
         detailsModal.hide();
         setMainPath(['Scan', 'Welcome', 'Product', 'Details(Out of Stock)', 'Product']);
     }
-}
+
 
 // ===== Clear Cart =====
 function clearCart() {
